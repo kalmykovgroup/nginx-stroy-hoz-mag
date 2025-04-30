@@ -1,0 +1,55 @@
+﻿services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "1540:1540" # 1c # ragent (тонкие клиенты) точка входа для тонких клиентов
+      - "1541:1541" # 1c # rmngr/rphost
+      - "1545:1545" # 1c # ras (администрирование)
+      - "1555:1555" # 1c # ras (мониторинг) 
+      - "${ONEC_PORT_RANGE_DOCKER}:${ONEC_PORT_RANGE_DOCKER}" #  1с Рабочие процессы(session) (100шт.)
+      - "80:80" # Apache внутри server теперь отдаёт Web-клиент
+      - "443:443"   
+      - "8006:8006" #proxmox web интерфейс главного сервера
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # основной конфиг
+      - ./nginx/templates/:/etc/nginx/templates/  # шаблоны
+      - ./nginx/conf.d/:/etc/nginx/conf.d/        # конфиги для виртуальных хостов
+      - ./nginx/stream.d/:/etc/nginx/stream.d/    # конфиги для stream
+      - ./nginx/certbot/conf:/etc/letsencrypt   # ← сертификаты    
+      - ./nginx/certbot/www:/var/www/certbot 
+    environment:
+      - DOMAIN=${DOMAIN}  
+      - DOMAIN_1C=${DOMAIN_1C}  
+      - WILDCARD_DOMAIN_1C=${WILDCARD_DOMAIN_1C}  
+      - IP_VM_1C=${IP_VM_1C}  
+      - IP_VM_STORE=${IP_VM_STORE}  
+      - IP_VM_CLIENT_1C=${IP_VM_CLIENT_1C}  
+      - DOMAIN_VM_CLIENT_1C=${DOMAIN_VM_CLIENT_1C}  
+      - PROXMOX_IP=${PROXMOX_IP}  
+      - PROXMOX_PORT=${PROXMOX_PORT}  
+    networks:
+      - public # Для связи с server 
+  
+  certbot:
+    build: 
+     context: ./certbot
+     dockerfile: Dockerfile
+    container_name: certbot 
+    volumes: 
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./certbot/cloudflare.ini:/cloudflare.ini:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+      - DOMAIN=${DOMAIN}
+      - DOMAIN_1C=${DOMAIN_1C}
+      - WILDCARD_DOMAIN_1C=${WILDCARD_DOMAIN_1C}
+    restart: unless-stopped
+
+networks: 
+  public:
+    driver: bridge  # Обычная сеть для nginx 
