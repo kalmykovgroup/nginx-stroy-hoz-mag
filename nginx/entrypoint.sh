@@ -46,7 +46,7 @@ if [ -f "$CERT_PATH" ]; then
 
   echo "🔒 SSL-сертификат найден, генерируем конфиг с HTTPS..."
   envsubst '${PROXMOX_IP} ${PROXMOX_PORT} ${IP_VM_CLIENT_1C} ${DOMAIN}' < "$TEMPLATE_HTTPS" > "$TARGET_CONF"
-  envsubst '${DOMAIN}' < "$TEMPLATE_STREAM" > "$TARGET_STREAM_CONF"
+  envsubst '${IP_VM_CLIENT_1C}' < "$TEMPLATE_STREAM" > "$TARGET_STREAM_CONF"
 else
   echo "🌐 SSL ещё нет, запускаемся с HTTP-only..."
   envsubst '${DOMAIN}' < "$TEMPLATE_HTTP" > "$TARGET_CONF"
