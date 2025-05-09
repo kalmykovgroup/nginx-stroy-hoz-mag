@@ -21,14 +21,9 @@
       - ./nginx/stream.d/:/etc/nginx/stream.d/    # конфиги для stream
       - ./nginx/certbot/conf:/etc/letsencrypt   # ← сертификаты    
       - ./nginx/certbot/www:/var/www/certbot 
-    environment:
-      - DOMAIN=${DOMAIN}  
-      - DOMAIN_1C=${DOMAIN_1C}  
-      - WILDCARD_DOMAIN_1C=${WILDCARD_DOMAIN_1C}  
-      - IP_VM_1C=${IP_VM_1C}  
-      - IP_VM_STORE=${IP_VM_STORE}  
+    environment:   
       - IP_VM_CLIENT_1C=${IP_VM_CLIENT_1C}  
-      - DOMAIN_VM_CLIENT_1C=${DOMAIN_VM_CLIENT_1C}  
+      - DOMAIN=${DOMAIN}  
       - PROXMOX_IP=${PROXMOX_IP}  
       - PROXMOX_PORT=${PROXMOX_PORT}  
     networks:
@@ -44,10 +39,8 @@
       - ./certbot/cloudflare.ini:/cloudflare.ini:ro
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL} 
       - DOMAIN=${DOMAIN}
-      - DOMAIN_1C=${DOMAIN_1C}
-      - WILDCARD_DOMAIN_1C=${WILDCARD_DOMAIN_1C}
     restart: unless-stopped
 
 networks: 

@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
+ 
 : "${DOMAIN:?❌ DOMAIN не задан!}" 
-: "${DOMAIN_1C:?❌ DOMAIN_1C не задан!}" 
-: "${WILDCARD_DOMAIN_1C:?❌ WILDCARD_DOMAIN_1C не задан!}" 
 : "${CERTBOT_EMAIL:?❌ CERTBOT_EMAIL не задан!}" 
 
-echo "🌐 Certbot entrypoint запущен..."
-echo "🔹 DOMAIN: ${DOMAIN}"
-echo "🔹 DOMAIN_1C: ${DOMAIN_1C}"
+echo "🌐 Certbot entrypoint запущен..." 
 echo "🔹 EMAIL: ${CERTBOT_EMAIL}"
-echo "🔹 WILDCARD_DOMAIN_1C: ${WILDCARD_DOMAIN_1C}"
+echo "🔹 DOMAIN: ${DOMAIN}"
 
 CLOUDFLARE_CRED="/cloudflare.ini"
 RENEW_CRON="/etc/cron.d/certbot-renew"
@@ -55,10 +51,8 @@ issue_if_missing() {
 }
 
 
-# --- Выпуск всех нужных сертификатов ---
-issue_if_missing "${DOMAIN}" "${DOMAIN}"                        # kalmykov.group
-issue_if_missing "${DOMAIN_1C}" "${DOMAIN_1C}"          # 1c.kalmykov.group
-issue_if_missing "${WILDCARD_DOMAIN_1C}" "*.${DOMAIN_1C}"        # *.1c.kalmykov.group — wildcard
+# --- Выпуск всех нужных сертификатов --- 
+issue_if_missing "${DOMAIN}" "${DOMAIN}"        # 1c.kalmykov.group
 
 
 # --- Cron для продления ---
